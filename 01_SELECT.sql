@@ -284,15 +284,230 @@ WHERE DEPT_CODE = 'D6' AND SALARY > 3000000;
 -- 사번, 이름, 급여 조회
 SELECT EMP_ID , EMP_NAME , SALARY 
 FROM EMPLOYEE
-WHERE SALARY >= 3000000 AND SALARY <=5000000
+WHERE SALARY >= 3000000 AND SALARY <=5000000;
 
 -- EMPLOYEE 테이블에서
 -- 급여가 300만 미만, 500만 초과인 사원의
 -- 사번, 이름, 급여 조회
+SELECT EMP_ID, EMP_NAME, SALARY
+FROM   EMPLOYEE
+WHERE  SALARY < 3000000 OR SALARY > 5000000;
+
+/****************************************/
+/*			 컬럼명 BETWEEN (A) AND (B) 			*/
+/****************************************/
+-- 컬럼의 값이 A이상 B 이하면 TRUE
 SELECT EMP_ID , EMP_NAME , SALARY 
 FROM EMPLOYEE
-WHERE SALARY < 3000000 
-OR    SALARY > 5000000;
+WHERE SALARY BETWEEN 3000000 AND 5000000;
+
+/****************************************/
+/* 			컬럼명 NOT BETWEEN (A) AND (B) 		*/
+/****************************************/
+-- 컬럼 값이 A 이상 B 이하면 FALSE
+   --> A 미만 또는 B 초과 시 TRUE
+SELECT EMP_ID , EMP_NAME , SALARY 
+FROM EMPLOYEE
+WHERE SALARY NOT BETWEEN 3000000 AND 5000000;
+
+
+/* 날짜도 범위 비교 가능 */
+
+-- EMPLOYEE 테이블에서
+-- 입사일이 '2000-01-01'부터 '2000-12-31' 사이인 사원의
+-- 이름, 입사일 조회
+
+SELECT EMP_NAME , HIRE_DATE 
+FROM EMPLOYEE
+WHERE HIRE_DATE
+	BETWEEN
+	TO_DATE('2000-01-01','YYYY-MM-DD')
+	AND
+	TO_DATE('2000-12-31','YYYY-MM-DD');
+	
+	
+-------------------------------------------------------------------
+	
+
+-- EMPLOYEE 테이블에서
+-- 부서코드가 'D5', 'D6', 'D9'인 사원의
+-- 이름, 부서코드, 급여 조회
+
+SELECT EMP_NAME , DEPT_CODE , SALARY 
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D6'
+OR DEPT_CODE ='D5'
+OR DEPT_CODE = 'D9';
+
+--------------------------------------------
+
+/****************************************/
+/* 			컬럼명 IN (값1, 값2, 값3...)	 			*/
+/****************************************/
+	
+	-- 컬럼의 값이 () 내 값과 일치하면 TRUE
+
+
+-- EMPLOYEE 테이블에서
+-- 부서코드가 'D5', 'D6', 'D9'인 사원의
+-- 이름, 부서코드, 급여 조회
+
+SELECT EMP_NAME , DEPT_CODE , SALARY 
+FROM EMPLOYEE
+WHERE DEPT_CODE IN('D5','D6','D9');
+	
+/****************************************/
+/* 			컬럼명 NOT IN (값1, 값2, 값3...)		*/
+/****************************************/
+	
+	-- 컬럼의 값이 () 내 값과 일치하면 FALSE	
+		--> 컬럼의 값이 () 내 값과 일치하지 않으면 TRUE
+	
+-- EMPLOYEE 테이블에서
+-- 부서코드가 'D5', 'D6', 'D9'인 아닌 사원의
+-- 이름, 부서코드, 급여 조회
+
+SELECT EMP_NAME , DEPT_CODE , SALARY 
+FROM EMPLOYEE
+WHERE DEPT_CODE NOT IN('D5','D6','D9');
+--> DEFT_CODE NULL인 사원 2명 제외
+	
+	/* 위 예제에서 제외된 2명 결과에 추가하는 SQL */
+	SELECT EMP_NAME , DEPT_CODE , SALARY 
+FROM EMPLOYEE
+WHERE DEPT_CODE NOT IN('D5','D6','D9') OR DEPT_CODE IS NULL;
+	
+	--------------------------------------------
+/************************************************/
+
+/*  **** LIKE *****/
+/************************************************/
+ /* 
+ * - 비교하려는 값이 특정한 패턴을 만족 시키면(TRUE) 조회하는 연산자
+ * 
+ * [작성법]
+ * WHERE 컬럼명 LIKE '패턴'
+ * 
+ * - LIKE 패턴( == 와일드 카드  ) 
+ * 
+ * '%' (포함)
+ * - '%A' : 문자열이 앞은 어떤 문자든 포함되고 마지막은 A
+ * 			-> A로 끝나는 문자열
+ * - 'A%' : A로 시작하는 문자열
+ * - '%A%' : A가 포함된 문자열
+ *  
+ * 
+ * '_' (글자 수)
+ * - 'A_' : A 뒤에 아무거나 한 글자만 있는 문자열
+ *          (AB ,A1, AQ, A가)
+ * 
+ * - '___A' : A 앞에 아무거나 3글자만 있는 문자열
+ */
+
+		
+-- EMPLOYEE 테이블에서 성이 '전' 씨인 사원의 사번, 이름 조회
+
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME
+LIKE '전%'; 
+
+
+-- EMPLOYEE 테이블에서 이름이 '수' 로 끝나는 사원의 사번, 이름 조회
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME
+LIKE '%수'; 
+
+
+
+-- EMPLOYEE 테이블에서 이름에 '하' 가 포함되는 사원의 사번, 이름 조회
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME
+LIKE '%하%'; 
+
+
+-- EMPLOYEE 테이블에서 이름이 '전' 시작, '돈' 끝나는 사원의 사번, 이름 조회
+
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME
+LIKE '전%돈'; 
+
+-- EMPLOYEE 테이블에서
+-- 전화번호가 '010'으로 시작하는 사원의 이름, 전화번호 조회
+SELECT EMP_NAME , PHONE 
+FROM EMPLOYEE
+--WHERE PHONE LIKE '010%' 			-- %버전
+WHERE PHONE LIKE '010________';	-- _버전
+
+-- EMPLOYEE 테이블에서
+-- EMAIL의 아이디 (@ 앞의 글자)의 글자 수가 5글자인 사원의
+-- 이름, EMAIL 조회
+
+SELECT EMP_NAME ,EMAIL 
+FROM EMPLOYEE
+WHERE EMAIL LIKE '_____@%';
+
+
+-- EMPLOYEE 테이블에서
+-- 이메일의 아이디 중 '_' 앞 쪽 글자의 수가 3글자인 사원의
+-- 사번, 이름, 이메일 조회
+
+SELECT EMP_ID ,EMP_NAME , EMAIL 
+FROM EMPLOYEE
+WHERE EMAIL LIKE '____%';
+
+--> 문제점 : 
+-- 기준으로 삼은 문자 '_'와
+-- LIKE의 와일드카드 '_'의 표기법이 동일하여
+-- 모든 '_'가 와일드카드로 인식됨
+  ---> 앞에 4글자 있고, 뒤에 아무거나 = 4글자 이상
+
+-- 해결방법 : 
+-- LIKE의 ESCAPE 옵션 사용하기
+
+--> ESCAPE 옵션 : 와일드 카드의 의미를 벗어나 단순 문자열로 인식
+-->   적용 범위 : 특수문자 뒤 한 글자
+
+SELECT EMP_ID, EMP_NAME , EMAIL  
+FROM EMPLOYEE
+WHERE EMAIL  LIKE '___#_%' ESCAPE '#';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
